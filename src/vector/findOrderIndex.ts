@@ -7,4 +7,5 @@ interface FindOrderIndex {
 export const findOrderIndex: FindOrderIndex = (
   { operationsInOrder, operationsTable },
   { insertBefore },
-) => (insertBefore ? operationsTable[insertBefore] : operationsInOrder.length)
+) =>
+  insertBefore ? operationsTable[insertBefore].order : operationsInOrder.length

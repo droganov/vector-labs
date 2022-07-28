@@ -15,7 +15,7 @@ export type VectorOperation<Item> = VectorInsertOperation<Item>
 
 export type VectorState<Item> = {
   operationsInTime: VectorOperation<Item>[]
-  operationsTable: Record<string, number>
+  operationsTable: Record<string, { order: number; undoCount: number }>
   operationsInOrder: VectorOperation<Item>[]
   visibleOperations: VectorOperation<Item>[]
   result: Item[]

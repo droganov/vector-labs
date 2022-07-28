@@ -1,6 +1,7 @@
 import { findOrderIndex } from './findOrderIndex.js'
 import { findTimeIndex } from './findTimeIndex.js'
 import { insertOperation } from './insertOperation.js'
+import { mapResults } from './mapResults.js'
 import { takeVisibleOperations } from './takeVisibleOperations.js'
 import { updateTableOrder } from './updateTableOrder.js'
 import { VectorOperation, VectorState } from './vector.js'
@@ -38,10 +39,13 @@ export const next: Next = (state, operation) => {
     operationsTable,
   )
 
+  let result = mapResults(visibleOperations)
+
   return {
     operationsInTime,
     operationsInOrder,
     operationsTable,
     visibleOperations,
+    result,
   }
 }

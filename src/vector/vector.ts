@@ -1,8 +1,8 @@
 import { next } from './next.js'
 
+// #region Types
 export type AnyOperation = { id: string; time: number; type: string }
 
-// #region Types
 type OperationId = AnyOperation['id']
 
 type VectorInsertOperation<Item> = AnyOperation & {
@@ -15,11 +15,13 @@ export type VectorOperation<Item> = VectorInsertOperation<Item>
 
 export type VectorState<Item> = {
   operationsInTime: VectorOperation<Item>[]
-  operationsTable: Record<string, { order: number; undoCount: number }>
   operationsInOrder: VectorOperation<Item>[]
+  operationsTable: Record<string, { order: number; undoCount: number }>
   visibleOperations: VectorOperation<Item>[]
   result: Item[]
 }
+
+export type VectorRecord = VectorState<unknown>['operationsTable']
 
 interface VectorFactory {
   <Item>(): {

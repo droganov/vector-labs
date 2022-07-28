@@ -1,6 +1,7 @@
 import { findOrderIndex } from './findOrderIndex.js'
 import { findTimeIndex } from './findTimeIndex.js'
 import { insertOperation } from './insertOperation.js'
+import { updateTableOrder } from './updateTableOrder.js'
 import { VectorOperation, VectorState } from './vector.js'
 
 interface Next {
@@ -22,5 +23,14 @@ export const next: Next = (state, operation) => {
     timeIndex,
   )
 
-  return { operationsInTime }
+  // TODO: apply vectorOperation
+  let operationsInOrder = insertOperation(
+    state.operationsInOrder,
+    operation,
+    orderIndex,
+  )
+
+  let operationsTable = updateTableOrder(state, operationsInOrder, orderIndex)
+
+  return { operationsInTime, operationsInOrder, operationsTable }
 }

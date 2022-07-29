@@ -11,7 +11,7 @@ it('throws when operation type is not supported', () => {
   }).toThrow('Unknown vector operation type')
 })
 
-it('inserts', () => {
+it('inserts first', () => {
   let result = applyVectorOperation(
     {},
     {
@@ -31,5 +31,37 @@ it('inserts', () => {
       },
     },
     reOrderFrom: 0,
+  })
+})
+
+it('inserts second', () => {
+  let result = applyVectorOperation(
+    {
+      a: {
+        order: 0,
+        undoCount: 0,
+      },
+    },
+    {
+      id: 'b',
+      time: 1,
+      type: 'vector/insert',
+      insertBefore: 'a',
+      payload: 'b',
+    },
+    1,
+  )
+  expect(result).toEqual({
+    operationsTable: {
+      a: {
+        order: 0,
+        undoCount: 0,
+      },
+      b: {
+        order: 1,
+        undoCount: 0,
+      },
+    },
+    reOrderFrom: 1,
   })
 })

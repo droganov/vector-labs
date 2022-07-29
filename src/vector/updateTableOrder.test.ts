@@ -1,57 +1,32 @@
 import { updateTableOrder } from './updateTableOrder.js'
-import { VectorState } from './vector.js'
 
 it('returns empty hash when state is empty', () => {
-  let state: VectorState<string> = {
-    operationsInTime: [],
-    operationsTable: {},
-    operationsInOrder: [],
-    visibleOperations: [],
-    result: [],
-  }
-
-  let result = updateTableOrder(state, [], 0)
+  let result = updateTableOrder({}, [], 0)
 
   expect(result).toEqual({})
 })
 
-it('adds operation hash', () => {
-  let state: VectorState<string> = {
-    operationsInTime: [],
-    operationsTable: {},
-    operationsInOrder: [],
-    visibleOperations: [],
-    result: [],
-  }
-
-  let result = updateTableOrder(
-    state,
-    [
-      {
-        id: 'a',
-        time: 1,
-        type: 'vector/insert',
-        insertBefore: null,
-        payload: 'a',
-      },
-    ],
-    0,
-  )
-
-  expect(result).toEqual({ a: { order: 0, undoCount: 0 } })
+it('throws when the state is not consistent', () => {
+  expect(() => {
+    updateTableOrder(
+      {},
+      [
+        {
+          id: 'a',
+          time: 1,
+          type: 'vector/insert',
+          insertBefore: null,
+          payload: 'a',
+        },
+      ],
+      0,
+    )
+  }).toThrow('Key "a" is not in operations table')
 })
 
-it('updates operation hash', () => {
-  let state: VectorState<string> = {
-    operationsInTime: [],
-    operationsTable: { a: { order: 0, undoCount: 0 } },
-    operationsInOrder: [],
-    visibleOperations: [],
-    result: [],
-  }
-
+it('updates pointers', () => {
   let result = updateTableOrder(
-    state,
+    { a: { order: 0, undoCount: 0 }, b: { order: 1, undoCount: 0 } },
     [
       {
         id: 'b',
@@ -78,16 +53,10 @@ it('updates operation hash', () => {
 })
 
 it('is immutable', () => {
-  let state: VectorState<string> = {
-    operationsInTime: [],
-    operationsTable: { a: { order: 0, undoCount: 0 } },
-    operationsInOrder: [],
-    visibleOperations: [],
-    result: [],
-  }
+  let operationsTable = { a: { order: 0, undoCount: 0 } }
 
   let result = updateTableOrder(
-    state,
+    operationsTable,
     [
       {
         id: 'a',
@@ -100,6 +69,6 @@ it('is immutable', () => {
     0,
   )
 
-  expect(result).not.toBe(state.operationsTable)
-  expect(result.a).not.toBe(state.operationsTable.a)
+  expect(result).not.toBe(operationsTable)
+  expect(result.a).not.toBe(operationsTable.a)
 })

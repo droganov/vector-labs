@@ -1,27 +1,28 @@
-import { VectorOperation, VectorRecord, VectorState } from './vector.js'
+import { VectorOperation, VectorRecord } from './vector.js'
 
 interface UpdateTableOrder {
-  <State>(
-    state: VectorState<State>,
-    operations: VectorOperation<State>[],
+  <Item>(
+    operationsTable: VectorRecord,
+    operations: VectorOperation<Item>[],
     skip: number,
   ): VectorRecord
 }
 
 export const updateTableOrder: UpdateTableOrder = (
-  { operationsTable },
+  operationsTable,
   operations,
   skip,
 ) =>
   operations.slice(skip).reduce(
-    (acc, operation, index) => ({
-      ...acc,
-      [operation.id]: {
+    (acc, operation, index) => {
+      if (!(operation.id in acc)) {
+        throw new Error(`Key "${operation.id}" is not in operations table`)
+      }
+      acc[operation.id] = {
         ...acc[operation.id],
         order: index + skip,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        undoCount: acc[operation.id]?.undoCount || 0,
-      },
-    }),
-    operationsTable,
+      }
+      return acc
+    },
+    { ...operationsTable },
   )

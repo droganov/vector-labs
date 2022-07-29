@@ -1,7 +1,13 @@
 import { updateTableOrder } from './updateTableOrder.js'
 
 it('returns empty hash when state is empty', () => {
-  let result = updateTableOrder({}, [], 0)
+  let result = updateTableOrder(
+    {
+      operationsTable: {},
+      reOrderFrom: 0,
+    },
+    [],
+  )
 
   expect(result).toEqual({})
 })
@@ -9,7 +15,10 @@ it('returns empty hash when state is empty', () => {
 it('throws when the state is not consistent', () => {
   expect(() => {
     updateTableOrder(
-      {},
+      {
+        operationsTable: {},
+        reOrderFrom: 0,
+      },
       [
         {
           id: 'a',
@@ -19,14 +28,19 @@ it('throws when the state is not consistent', () => {
           payload: 'a',
         },
       ],
-      0,
     )
   }).toThrow('Key "a" is not in operations table')
 })
 
 it('updates pointers', () => {
   let result = updateTableOrder(
-    { a: { order: 0, undoCount: 0 }, b: { order: 1, undoCount: 0 } },
+    {
+      operationsTable: {
+        a: { order: 0, undoCount: 0 },
+        b: { order: 1, undoCount: 0 },
+      },
+      reOrderFrom: 0,
+    },
     [
       {
         id: 'b',
@@ -43,7 +57,6 @@ it('updates pointers', () => {
         payload: 'a',
       },
     ],
-    0,
   )
 
   expect(result).toEqual({
@@ -55,19 +68,15 @@ it('updates pointers', () => {
 it('is immutable', () => {
   let operationsTable = { a: { order: 0, undoCount: 0 } }
 
-  let result = updateTableOrder(
-    operationsTable,
-    [
-      {
-        id: 'a',
-        time: 1,
-        type: 'vector/insert',
-        insertBefore: null,
-        payload: 'a',
-      },
-    ],
-    0,
-  )
+  let result = updateTableOrder({ operationsTable, reOrderFrom: 0 }, [
+    {
+      id: 'a',
+      time: 1,
+      type: 'vector/insert',
+      insertBefore: null,
+      payload: 'a',
+    },
+  ])
 
   expect(result).not.toBe(operationsTable)
   expect(result.a).not.toBe(operationsTable.a)

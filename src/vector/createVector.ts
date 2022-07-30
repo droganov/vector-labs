@@ -4,29 +4,29 @@ import { OutOfRangeError } from './OutOfRangeError.js'
 // #region Types
 export type AnyOperation = { id: string; time: number; type: string }
 
-type OperationId = AnyOperation['id']
+export type OperationId = AnyOperation['id']
 
-type VectorInsertOperation<Item> = AnyOperation & {
+export type VectorInsertOperation<Item> = AnyOperation & {
   insertBefore: OperationId | null
   payload: Item
   type: 'vector/insert'
 }
-type VectorInsertedOperation<Item> = AnyOperation & {
+export type VectorInsertedOperation<Item> = AnyOperation & {
   insertBefore: OperationId | null
   payload: Item
   type: 'vector/inserted'
 }
 
-type VectorDeleteOperation = AnyOperation & {
+export type VectorDeleteOperation = AnyOperation & {
   operationId: OperationId
   type: 'vector/delete'
 }
-type VectorDeletedOperation = AnyOperation & {
+export type VectorDeletedOperation = AnyOperation & {
   operationId: OperationId
   type: 'vector/deleted'
 }
 
-type LoguxProcessedOperation = AnyOperation & {
+export type LoguxProcessedOperation = AnyOperation & {
   type: 'logux/processed'
 }
 

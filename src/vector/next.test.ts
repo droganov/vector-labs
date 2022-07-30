@@ -1,5 +1,10 @@
 import { next } from './next.js'
-import { VectorClientOperation, VectorState } from './createVector.js'
+import {
+  VectorClientOperation,
+  VectorDeleteOperation,
+  VectorInsertOperation,
+  VectorState,
+} from './createVector.js'
 
 it('returns same state when operation exists in hashtable', () => {
   let operation: VectorClientOperation<string> = {
@@ -152,6 +157,86 @@ describe('insertions', () => {
       },
       visibleOperations: [secondOperation, firstOperation],
       result: ['item 2', 'item 1'],
+    })
+  })
+})
+
+describe('deletions', () => {
+  it('deletes', () => {
+    let insertOperation: VectorInsertOperation<string> = {
+      insertBefore: null,
+      id: 'a',
+      time: 1,
+      type: 'vector/insert',
+      payload: 'item',
+    }
+    let deleteOperation: VectorDeleteOperation = {
+      id: 'b',
+      operationId: 'a',
+      time: 2,
+      type: 'vector/delete',
+    }
+    let state: VectorState<string> = {
+      operationsInTime: [insertOperation],
+      operationsInOrder: [insertOperation],
+      operationsTable: { a: { order: 0, undoCount: 0, confirmCount: 0 } },
+      visibleOperations: [insertOperation],
+      result: ['a'],
+    }
+    let result = next(state, deleteOperation)
+
+    expect(result).toEqual({
+      operationsInTime: [insertOperation, deleteOperation],
+      operationsInOrder: [insertOperation, deleteOperation],
+      operationsTable: {
+        a: { order: 0, undoCount: 1, confirmCount: 0 },
+        b: { order: 1, undoCount: 0, confirmCount: 0 },
+      },
+      visibleOperations: [],
+      result: [],
+    })
+  })
+  it('supports adding before deleted operations', () => {
+    let insertOperation1: VectorInsertOperation<string> = {
+      insertBefore: null,
+      id: 'a',
+      time: 1,
+      type: 'vector/insert',
+      payload: 'item',
+    }
+    let insertOperation2: VectorInsertOperation<string> = {
+      insertBefore: 'a',
+      id: 'c',
+      time: 3,
+      type: 'vector/insert',
+      payload: 'item c',
+    }
+    let deleteOperation: VectorDeleteOperation = {
+      id: 'b',
+      operationId: 'a',
+      time: 2,
+      type: 'vector/delete',
+    }
+    let state: VectorState<string> = {
+      operationsInTime: [insertOperation1],
+      operationsInOrder: [insertOperation1],
+      operationsTable: { a: { order: 0, undoCount: 0, confirmCount: 0 } },
+      visibleOperations: [insertOperation1],
+      result: ['a'],
+    }
+    let deletedState = next(state, deleteOperation)
+    let insertedState = next(deletedState, insertOperation2)
+
+    expect(insertedState).toEqual({
+      operationsInTime: [insertOperation1, deleteOperation, insertOperation2],
+      operationsInOrder: [insertOperation2, insertOperation1, deleteOperation],
+      operationsTable: {
+        a: { order: 1, undoCount: 1, confirmCount: 0 },
+        b: { order: 2, undoCount: 0, confirmCount: 0 },
+        c: { order: 0, undoCount: 0, confirmCount: 0 },
+      },
+      visibleOperations: [insertOperation2],
+      result: [insertOperation2.payload],
     })
   })
 })

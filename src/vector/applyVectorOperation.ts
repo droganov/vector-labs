@@ -20,7 +20,7 @@ export const applyVectorOperation: ApplyVectorOperation = (
       return {
         operationsTable: {
           ...operationsTable,
-          [operation.id]: { order, undoCount: 0 },
+          [operation.id]: { order, undoCount: 0, confirmCount: 0 },
         },
         reOrderFrom: order,
       }

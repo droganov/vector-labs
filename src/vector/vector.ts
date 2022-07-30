@@ -14,17 +14,21 @@ type VectorInsertOperation<Item> = AnyOperation & {
 export type VectorOperation<Item> = VectorInsertOperation<Item>
 
 export type VectorState<Item> = {
-  operationsInTime: VectorOperation<Item>[]
-  operationsInOrder: VectorOperation<Item>[]
-  operationsTable: Record<string, { order: number; undoCount: number }>
-  visibleOperations: VectorOperation<Item>[]
-  result: Item[]
+  operationsInTime: VectorOperation<Item>[] // sorted by time
+  operationsInOrder: VectorOperation<Item>[] // sorted by id-relation
+  operationsTable: Record<
+    OperationId,
+    { order: number; undoCount: number; confirmCount: number }
+  >
+  visibleOperations: VectorOperation<Item>[] // operationsInOrder filtered by undoCount === 0
+  result: Item[] // mapped values of visibleOperations
 }
 
 export type VectorRecord = VectorState<unknown>['operationsTable']
 
 interface VectorFactory {
   <Item>(): {
+    getValue(): Item[]
     insert(item: Item, index?: number): void
   }
 }
@@ -33,19 +37,21 @@ interface VectorFactory {
 export const Vector: VectorFactory = <Item>() => {
   let state: VectorState<Item> = {
     operationsInTime: [],
-    operationsTable: {},
     operationsInOrder: [],
+    operationsTable: {},
     visibleOperations: [],
     result: [],
   }
 
   return {
+    getValue: () => state.result,
     insert(item: Item, index = NaN) {
+      let insertBefore =
+        index in state.visibleOperations
+          ? state.visibleOperations[index].id
+          : null
       let operation: VectorInsertOperation<Item> = {
-        insertBefore:
-          index in state.visibleOperations
-            ? state.visibleOperations[index].id
-            : null,
+        insertBefore,
         id: Math.random().toString(),
         time: Date.now(),
         type: 'vector/insert',

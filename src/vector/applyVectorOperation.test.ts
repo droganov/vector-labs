@@ -28,6 +28,7 @@ it('inserts first', () => {
       a: {
         order: 0,
         undoCount: 0,
+        confirmCount: 0,
       },
     },
     reOrderFrom: 0,
@@ -40,6 +41,7 @@ it('inserts second', () => {
       a: {
         order: 0,
         undoCount: 0,
+        confirmCount: 0,
       },
     },
     {
@@ -56,10 +58,12 @@ it('inserts second', () => {
       a: {
         order: 0,
         undoCount: 0,
+        confirmCount: 0,
       },
       b: {
         order: 1,
         undoCount: 0,
+        confirmCount: 0,
       },
     },
     reOrderFrom: 1,

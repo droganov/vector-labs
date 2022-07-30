@@ -1,4 +1,4 @@
-import { VectorClientOperation, VectorRecord } from './vector.js'
+import { VectorClientOperation, VectorRecord } from './createVector.js'
 
 interface TakeVisibleOperations {
   <Item>(

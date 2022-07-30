@@ -1,1 +1,1 @@
-export * from './vector.js'
+export * from './createVector.js'

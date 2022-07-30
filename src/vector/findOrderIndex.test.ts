@@ -1,5 +1,5 @@
 import { findOrderIndex } from './findOrderIndex.js'
-import { VectorClientOperation, VectorState } from './vector.js'
+import { VectorClientOperation, VectorState } from './createVector.js'
 
 it('returns 0 when has empty logs', () => {
   let state: VectorState<string> = {

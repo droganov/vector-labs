@@ -48,7 +48,7 @@ interface VectorFactory {
 }
 // #endregion
 
-export const Vector: VectorFactory = <Item>() => {
+export const createVector: VectorFactory = <Item>() => {
   let state: VectorState<Item> = {
     operationsInTime: [],
     operationsInOrder: [],
@@ -60,10 +60,10 @@ export const Vector: VectorFactory = <Item>() => {
   return {
     getValue: () => state.result,
     insert(item: Item, index = NaN) {
-      let insertBefore =
-        index in state.visibleOperations
-          ? state.visibleOperations[index].id
-          : null
+      if (!isNaN(index) && !(index in state.visibleOperations)) {
+        throw new Error('Vector: index out of range')
+      }
+      let insertBefore = state.visibleOperations[index]?.id || null
       let operation: VectorInsertOperation<Item> = {
         insertBefore,
         id: Math.random().toString(),

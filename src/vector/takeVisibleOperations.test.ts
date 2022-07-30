@@ -1,5 +1,5 @@
 import { takeVisibleOperations } from './takeVisibleOperations.js'
-import { VectorClientOperation } from './vector.js'
+import { VectorClientOperation } from './createVector.js'
 
 it('ignores invisible operations', () => {
   let result = takeVisibleOperations(

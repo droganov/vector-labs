@@ -1,4 +1,4 @@
-import { AnyOperation } from './vector.js'
+import { AnyOperation } from './createVector.js'
 
 interface FindTimeIndex {
   (operations: AnyOperation[], operation: AnyOperation): number

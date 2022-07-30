@@ -1,5 +1,5 @@
 import { applyVectorOperation } from './applyVectorOperation.js'
-import { VectorClientOperation } from './vector.js'
+import { VectorClientOperation } from './createVector.js'
 
 it('throws when operation type is not supported', () => {
   expect(() => {

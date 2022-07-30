@@ -1,5 +1,5 @@
 import { ApplyVectorOperationResult } from './applyVectorOperation.js'
-import { VectorClientOperation, VectorRecord } from './vector.js'
+import { VectorClientOperation, VectorRecord } from './createVector.js'
 
 interface UpdateTableOrder {
   <Item>(

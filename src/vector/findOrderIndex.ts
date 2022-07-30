@@ -1,4 +1,4 @@
-import { VectorClientOperation, VectorState } from './vector.js'
+import { VectorClientOperation, VectorState } from './createVector.js'
 
 interface FindOrderIndex {
   <Item>(

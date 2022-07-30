@@ -1,4 +1,4 @@
-import { VectorClientOperation } from './vector.js'
+import { VectorClientOperation } from './createVector.js'
 
 interface MapResults {
   <Item>(visibleOperations: VectorClientOperation<Item>[]): Item[]

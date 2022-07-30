@@ -1,5 +1,5 @@
 import { next } from './next.js'
-import { VectorClientOperation, VectorState } from './vector.js'
+import { VectorClientOperation, VectorState } from './createVector.js'
 
 it('returns same state when operation exists in hashtable', () => {
   let operation: VectorClientOperation<string> = {

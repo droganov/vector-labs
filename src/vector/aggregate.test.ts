@@ -82,7 +82,6 @@ describe('logux/processed', () => {
     let visibleOperations: VectorOperation<string>[] = [
       {
         id: 'a',
-        operationId: 'b',
         time: 1,
         type: 'logux/processed',
       },

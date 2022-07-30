@@ -10,13 +10,11 @@ interface Aggregate {
   }
 }
 
-const visibleTypes = new Set(['vector/insert', 'vector/inserted'])
-
 export const aggregate: Aggregate = (operationsInOrder, operationsTable) =>
   operationsInOrder.reduce(
     (acc, operation) => {
       if (
-        visibleTypes.has(operation.type) &&
+        'payload' in operation &&
         operationsTable[operation.id].undoCount === 0
       ) {
         acc.visibleOperations.push(operation)

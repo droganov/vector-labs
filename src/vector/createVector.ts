@@ -1,4 +1,5 @@
 import { next } from './next.js'
+import { OutOfRangeError } from './OutOfRangeError.js'
 
 // #region Types
 export type AnyOperation = { id: string; time: number; type: string }
@@ -15,14 +16,27 @@ type VectorInsertedOperation<Item> = AnyOperation & {
   payload: Item
   type: 'vector/inserted'
 }
-type LoguxProcessedOperation = AnyOperation & {
+
+type VectorDeleteOperation = AnyOperation & {
   operationId: OperationId
+  type: 'vector/delete'
+}
+type VectorDeletedOperation = AnyOperation & {
+  operationId: OperationId
+  type: 'vector/deleted'
+}
+
+type LoguxProcessedOperation = AnyOperation & {
   type: 'logux/processed'
 }
 
-export type VectorClientOperation<Item> = VectorInsertOperation<Item>
+export type VectorClientOperation<Item> =
+  | VectorInsertOperation<Item>
+  | VectorDeleteOperation
+
 export type VectorRemoteOperation<Item> =
   | VectorInsertedOperation<Item>
+  | VectorDeletedOperation
   | LoguxProcessedOperation
 
 export type VectorOperation<Item> =
@@ -46,6 +60,7 @@ interface VectorFactory {
   <Item>(): {
     getValue(): Item[]
     insert(item: Item, index?: number): void
+    delete(index: number): void
     syncronize(operation: VectorRemoteOperation<Item>): void
   }
 }
@@ -64,7 +79,7 @@ export const createVector: VectorFactory = <Item>() => {
     getValue: () => state.result,
     insert(item: Item, index = NaN) {
       if (!isNaN(index) && !(index in state.visibleOperations)) {
-        throw new Error('Vector: index out of range')
+        throw new OutOfRangeError()
       }
       let insertBefore = state.visibleOperations[index]?.id || null
       let operation: VectorInsertOperation<Item> = {
@@ -73,6 +88,18 @@ export const createVector: VectorFactory = <Item>() => {
         time: Date.now(),
         type: 'vector/insert',
         payload: item,
+      }
+      state = next(state, operation)
+    },
+    delete(index: number) {
+      if (!(index in state.visibleOperations)) {
+        throw new OutOfRangeError()
+      }
+      let operation: VectorDeleteOperation = {
+        id: Math.random().toString(),
+        operationId: state.visibleOperations[index].id,
+        time: Date.now(),
+        type: 'vector/delete',
       }
       state = next(state, operation)
     },

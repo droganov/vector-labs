@@ -15,29 +15,32 @@ type VectorInsertedOperation<Item> = AnyOperation & {
   payload: Item
   type: 'vector/inserted'
 }
-type LoguxProcessedOperation<Item> = AnyOperation & {
-  insertBefore: OperationId | null
-  payload: Item
-  type: 'logux/processed '
+type LoguxProcessedOperation = AnyOperation & {
+  operationId: OperationId
+  type: 'logux/processed'
 }
 
 export type VectorClientOperation<Item> = VectorInsertOperation<Item>
 export type VectorRemoteOperation<Item> =
   | VectorInsertedOperation<Item>
-  | LoguxProcessedOperation<Item>
+  | LoguxProcessedOperation
+
+export type VectorOperation<Item> =
+  | VectorClientOperation<Item>
+  | VectorRemoteOperation<Item>
 
 export type VectorState<Item> = {
-  operationsInTime: VectorClientOperation<Item>[] // sorted by time
-  operationsInOrder: VectorClientOperation<Item>[] // sorted by id-relation
+  operationsInTime: VectorOperation<Item>[] // sorted by time
+  operationsInOrder: VectorOperation<Item>[] // sorted by id-relation
   operationsTable: Record<
     OperationId,
     { order: number; undoCount: number; confirmCount: number }
   >
-  visibleOperations: VectorClientOperation<Item>[] // operationsInOrder filtered by undoCount === 0
+  visibleOperations: VectorOperation<Item>[] // operationsInOrder filtered by undoCount === 0
   result: Item[] // mapped values of visibleOperations
 }
 
-export type VectorRecord = VectorState<unknown>['operationsTable']
+export type VectorRecord<Item> = VectorState<Item>['operationsTable']
 
 interface VectorFactory {
   <Item>(): {

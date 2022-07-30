@@ -1,11 +1,11 @@
 import { ApplyVectorOperationResult } from './applyVectorOperation.js'
-import { VectorClientOperation, VectorRecord } from './createVector.js'
+import { VectorOperation, VectorRecord } from './createVector.js'
 
 interface UpdateTableOrder {
   <Item>(
     unorderedOperation: ApplyVectorOperationResult,
-    operations: VectorClientOperation<Item>[],
-  ): VectorRecord
+    operations: VectorOperation<Item>[],
+  ): VectorRecord<Item>
 }
 
 export const updateTableOrder: UpdateTableOrder = (

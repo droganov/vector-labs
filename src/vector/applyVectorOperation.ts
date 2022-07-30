@@ -1,11 +1,11 @@
-import { VectorClientOperation, VectorRecord } from './createVector.js'
+import { VectorOperation, VectorRecord } from './createVector.js'
 
 interface ApplyVectorOperation {
   <Item>(
-    operationsTable: VectorRecord,
-    operation: VectorClientOperation<Item>,
+    operationsTable: VectorRecord<Item>,
+    operation: VectorOperation<Item>,
     order: number,
-  ): { operationsTable: VectorRecord; reOrderFrom: number }
+  ): { operationsTable: VectorRecord<Item>; reOrderFrom: number }
 }
 
 export type ApplyVectorOperationResult = ReturnType<ApplyVectorOperation>

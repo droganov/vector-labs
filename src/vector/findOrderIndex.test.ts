@@ -57,7 +57,7 @@ it('takes index from operationsTable', () => {
   let state: VectorState<string> = {
     operationsInTime: [],
     operationsTable: {
-      b: { order: 3, undoCount: 0 },
+      b: { order: 3, undoCount: 0, confirmCount: 0 },
     },
     operationsInOrder: [],
     visibleOperations: [],

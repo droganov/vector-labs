@@ -2,10 +2,9 @@ import { applyVectorOperation } from './applyVectorOperation.js'
 import { findOrderIndex } from './findOrderIndex.js'
 import { findTimeIndex } from './findTimeIndex.js'
 import { insertOperation } from './insertOperation.js'
-import { mapResults } from './mapResults.js'
-import { takeVisibleOperations } from './takeVisibleOperations.js'
 import { updateTableOrder } from './updateTableOrder.js'
 import { VectorClientOperation, VectorState } from './createVector.js'
+import { aggregate } from './aggregate.js'
 
 interface Next {
   <Item>(
@@ -40,12 +39,10 @@ export const next: Next = (state, operation) => {
 
   let operationsTable = updateTableOrder(unorderedOperation, operationsInOrder)
 
-  let visibleOperations = takeVisibleOperations(
+  let { visibleOperations, result } = aggregate(
     operationsInOrder,
     operationsTable,
   )
-
-  let result = mapResults(visibleOperations)
 
   return {
     operationsInTime,

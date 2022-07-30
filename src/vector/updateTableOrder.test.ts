@@ -36,8 +36,8 @@ it('updates pointers', () => {
   let result = updateTableOrder(
     {
       operationsTable: {
-        a: { order: 0, undoCount: 0 },
-        b: { order: 1, undoCount: 0 },
+        a: { order: 0, undoCount: 0, confirmCount: 0 },
+        b: { order: 1, undoCount: 0, confirmCount: 0 },
       },
       reOrderFrom: 0,
     },
@@ -60,13 +60,13 @@ it('updates pointers', () => {
   )
 
   expect(result).toEqual({
-    b: { order: 0, undoCount: 0 },
-    a: { order: 1, undoCount: 0 },
+    b: { order: 0, undoCount: 0, confirmCount: 0 },
+    a: { order: 1, undoCount: 0, confirmCount: 0 },
   })
 })
 
 it('is immutable', () => {
-  let operationsTable = { a: { order: 0, undoCount: 0 } }
+  let operationsTable = { a: { order: 0, undoCount: 0, confirmCount: 0 } }
 
   let result = updateTableOrder({ operationsTable, reOrderFrom: 0 }, [
     {

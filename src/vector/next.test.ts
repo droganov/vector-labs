@@ -1,8 +1,8 @@
 import { next } from './next.js'
-import { VectorOperation, VectorState } from './vector.js'
+import { VectorClientOperation, VectorState } from './vector.js'
 
 it('returns same state when operation exists in hashtable', () => {
-  let operation: VectorOperation<string> = {
+  let operation: VectorClientOperation<string> = {
     insertBefore: null,
     id: 'a',
     time: 1,
@@ -25,7 +25,7 @@ it('returns same state when operation exists in hashtable', () => {
 
 describe('insertions', () => {
   it('appends first operation', () => {
-    let operation: VectorOperation<string> = {
+    let operation: VectorClientOperation<string> = {
       insertBefore: null,
       id: 'a',
       time: 1,
@@ -50,14 +50,14 @@ describe('insertions', () => {
     })
   })
   it('appends second operation', () => {
-    let firstOperation: VectorOperation<string> = {
+    let firstOperation: VectorClientOperation<string> = {
       insertBefore: null,
       id: 'a',
       time: 1,
       type: 'vector/insert',
       payload: 'item 1',
     }
-    let secondOperation: VectorOperation<string> = {
+    let secondOperation: VectorClientOperation<string> = {
       insertBefore: null,
       id: 'b',
       time: 2,
@@ -85,14 +85,14 @@ describe('insertions', () => {
     })
   })
   it('inserts second operation before first', () => {
-    let firstOperation: VectorOperation<string> = {
+    let firstOperation: VectorClientOperation<string> = {
       insertBefore: null,
       id: 'a',
       time: 1,
       type: 'vector/insert',
       payload: 'item 1',
     }
-    let secondOperation: VectorOperation<string> = {
+    let secondOperation: VectorClientOperation<string> = {
       insertBefore: 'a',
       id: 'b',
       time: 2,
@@ -120,14 +120,14 @@ describe('insertions', () => {
     })
   })
   it('resolves race condition', () => {
-    let firstOperation: VectorOperation<string> = {
+    let firstOperation: VectorClientOperation<string> = {
       insertBefore: null,
       id: 'a',
       time: 2,
       type: 'vector/insert',
       payload: 'item 1',
     }
-    let secondOperation: VectorOperation<string> = {
+    let secondOperation: VectorClientOperation<string> = {
       insertBefore: 'a',
       id: 'b',
       time: 1,

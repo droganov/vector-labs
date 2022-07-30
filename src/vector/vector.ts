@@ -10,17 +10,30 @@ type VectorInsertOperation<Item> = AnyOperation & {
   payload: Item
   type: 'vector/insert'
 }
+type VectorInsertedOperation<Item> = AnyOperation & {
+  insertBefore: OperationId | null
+  payload: Item
+  type: 'vector/inserted'
+}
+type LoguxProcessedOperation<Item> = AnyOperation & {
+  insertBefore: OperationId | null
+  payload: Item
+  type: 'logux/processed '
+}
 
-export type VectorOperation<Item> = VectorInsertOperation<Item>
+export type VectorClientOperation<Item> = VectorInsertOperation<Item>
+export type VectorRemoteOperation<Item> =
+  | VectorInsertedOperation<Item>
+  | LoguxProcessedOperation<Item>
 
 export type VectorState<Item> = {
-  operationsInTime: VectorOperation<Item>[] // sorted by time
-  operationsInOrder: VectorOperation<Item>[] // sorted by id-relation
+  operationsInTime: VectorClientOperation<Item>[] // sorted by time
+  operationsInOrder: VectorClientOperation<Item>[] // sorted by id-relation
   operationsTable: Record<
     OperationId,
     { order: number; undoCount: number; confirmCount: number }
   >
-  visibleOperations: VectorOperation<Item>[] // operationsInOrder filtered by undoCount === 0
+  visibleOperations: VectorClientOperation<Item>[] // operationsInOrder filtered by undoCount === 0
   result: Item[] // mapped values of visibleOperations
 }
 
@@ -30,6 +43,7 @@ interface VectorFactory {
   <Item>(): {
     getValue(): Item[]
     insert(item: Item, index?: number): void
+    syncronize(operation: VectorRemoteOperation<Item>): void
   }
 }
 // #endregion
@@ -59,5 +73,6 @@ export const Vector: VectorFactory = <Item>() => {
       }
       state = next(state, operation)
     },
+    syncronize() {},
   }
 }

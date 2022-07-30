@@ -1,5 +1,5 @@
 import { findOrderIndex } from './findOrderIndex.js'
-import { VectorOperation, VectorState } from './vector.js'
+import { VectorClientOperation, VectorState } from './vector.js'
 
 it('returns 0 when has empty logs', () => {
   let state: VectorState<string> = {
@@ -10,7 +10,7 @@ it('returns 0 when has empty logs', () => {
     result: [],
   }
 
-  let operation: VectorOperation<string> = {
+  let operation: VectorClientOperation<string> = {
     id: 'a',
     time: 1,
     type: 'vector/insert',
@@ -40,7 +40,7 @@ it('returns operationsInOrder length when has no pointer operationsTable', () =>
     result: [],
   }
 
-  let operation: VectorOperation<string> = {
+  let operation: VectorClientOperation<string> = {
     id: 'a',
     time: 1,
     type: 'vector/insert',
@@ -64,7 +64,7 @@ it('takes index from operationsTable', () => {
     result: [],
   }
 
-  let operation: VectorOperation<string> = {
+  let operation: VectorClientOperation<string> = {
     id: 'a',
     time: 1,
     type: 'vector/insert',

@@ -1,9 +1,9 @@
-import { VectorOperation, VectorRecord } from './vector.js'
+import { VectorClientOperation, VectorRecord } from './vector.js'
 
 interface ApplyVectorOperation {
   <Item>(
     operationsTable: VectorRecord,
-    operation: VectorOperation<Item>,
+    operation: VectorClientOperation<Item>,
     order: number,
   ): { operationsTable: VectorRecord; reOrderFrom: number }
 }

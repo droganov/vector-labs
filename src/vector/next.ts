@@ -5,12 +5,12 @@ import { insertOperation } from './insertOperation.js'
 import { mapResults } from './mapResults.js'
 import { takeVisibleOperations } from './takeVisibleOperations.js'
 import { updateTableOrder } from './updateTableOrder.js'
-import { VectorOperation, VectorState } from './vector.js'
+import { VectorClientOperation, VectorState } from './vector.js'
 
 interface Next {
   <Item>(
     state: VectorState<Item>,
-    operation: VectorOperation<Item>,
+    operation: VectorClientOperation<Item>,
   ): VectorState<Item>
 }
 

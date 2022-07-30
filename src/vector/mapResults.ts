@@ -1,7 +1,7 @@
-import { VectorOperation } from './vector.js'
+import { VectorClientOperation } from './vector.js'
 
 interface MapResults {
-  <Item>(visibleOperations: VectorOperation<Item>[]): Item[]
+  <Item>(visibleOperations: VectorClientOperation<Item>[]): Item[]
 }
 
 export const mapResults: MapResults = visibleOperations =>

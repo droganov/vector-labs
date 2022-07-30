@@ -1,11 +1,11 @@
 import { applyVectorOperation } from './applyVectorOperation.js'
-import { VectorOperation } from './vector.js'
+import { VectorClientOperation } from './vector.js'
 
 it('throws when operation type is not supported', () => {
   expect(() => {
     applyVectorOperation(
       {},
-      { id: '', type: 'unknown' } as unknown as VectorOperation<unknown>,
+      { id: '', type: 'unknown' } as unknown as VectorClientOperation<unknown>,
       0,
     )
   }).toThrow('Unknown vector operation type')

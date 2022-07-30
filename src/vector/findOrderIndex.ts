@@ -1,7 +1,10 @@
-import { VectorOperation, VectorState } from './vector.js'
+import { VectorClientOperation, VectorState } from './vector.js'
 
 interface FindOrderIndex {
-  <Item>(state: VectorState<Item>, operation: VectorOperation<Item>): number
+  <Item>(
+    state: VectorState<Item>,
+    operation: VectorClientOperation<Item>,
+  ): number
 }
 
 export const findOrderIndex: FindOrderIndex = (

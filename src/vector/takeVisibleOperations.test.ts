@@ -1,5 +1,5 @@
 import { takeVisibleOperations } from './takeVisibleOperations.js'
-import { VectorOperation } from './vector.js'
+import { VectorClientOperation } from './vector.js'
 
 it('ignores invisible operations', () => {
   let result = takeVisibleOperations(
@@ -19,7 +19,7 @@ it('ignores invisible operations', () => {
 })
 
 it('takes visible operations', () => {
-  let operation: VectorOperation<string> = {
+  let operation: VectorClientOperation<string> = {
     id: 'a',
     time: 1,
     type: 'vector/insert',
@@ -34,7 +34,7 @@ it('takes visible operations', () => {
 })
 
 it('is immutable', () => {
-  let operations: VectorOperation<string>[] = [
+  let operations: VectorClientOperation<string>[] = [
     {
       id: 'a',
       time: 1,

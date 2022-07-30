@@ -1,10 +1,10 @@
-import { VectorOperation, VectorRecord } from './vector.js'
+import { VectorClientOperation, VectorRecord } from './vector.js'
 
 interface TakeVisibleOperations {
   <Item>(
-    operationsInOrder: VectorOperation<Item>[],
+    operationsInOrder: VectorClientOperation<Item>[],
     operationsTable: VectorRecord,
-  ): VectorOperation<Item>[]
+  ): VectorClientOperation<Item>[]
 }
 
 export const takeVisibleOperations: TakeVisibleOperations = (

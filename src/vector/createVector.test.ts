@@ -35,6 +35,7 @@ describe('deletions', () => {
   })
   it('deletes', () => {
     let vector = createVector<number>()
+
     vector.insert(1)
     vector.insert(2)
     vector.insert(3)

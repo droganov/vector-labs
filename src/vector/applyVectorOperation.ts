@@ -1,3 +1,10 @@
+import {
+  commitTypes,
+  VECTOR_DELETE,
+  VECTOR_DELETED,
+  VECTOR_INSERT,
+  VECTOR_INSERTED,
+} from './constants.js'
 import { VectorOperation, VectorRecord } from './createVector.js'
 
 interface ApplyVectorOperation {
@@ -15,10 +22,11 @@ export const applyVectorOperation: ApplyVectorOperation = (
   operation,
   order,
 ) => {
-  let patch = { [operation.id]: { order, undoCount: 0, confirmCount: 0 } }
+  let confirmCount = commitTypes.has(operation.type) ? 1 : 0
+  let patch = { [operation.id]: { order, undoCount: 0, confirmCount } }
   switch (operation.type) {
-    case 'vector/insert':
-    case 'vector/inserted':
+    case VECTOR_INSERT:
+    case VECTOR_INSERTED:
       return {
         operationsTable: {
           ...operationsTable,
@@ -27,8 +35,8 @@ export const applyVectorOperation: ApplyVectorOperation = (
         },
         reOrderFrom: order,
       }
-    case 'vector/delete':
-    case 'vector/deleted': {
+    case VECTOR_DELETE:
+    case VECTOR_DELETED: {
       let targetOperation = operationsTable[operation.operationId]
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!targetOperation) {

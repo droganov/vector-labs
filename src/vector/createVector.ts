@@ -1,5 +1,12 @@
 import { next } from './next.js'
 import { OutOfRangeError } from './OutOfRangeError.js'
+import {
+  LOGUX_PROCESSED,
+  VECTOR_DELETE,
+  VECTOR_DELETED,
+  VECTOR_INSERT,
+  VECTOR_INSERTED,
+} from './constants.js'
 
 // #region Types
 export type AnyOperation = { id: string; time: number; type: string }
@@ -9,25 +16,25 @@ export type OperationId = AnyOperation['id']
 export type VectorInsertOperation<Item> = AnyOperation & {
   insertBefore: OperationId | null
   payload: Item
-  type: 'vector/insert'
+  type: typeof VECTOR_INSERT
 }
 export type VectorInsertedOperation<Item> = AnyOperation & {
   insertBefore: OperationId | null
   payload: Item
-  type: 'vector/inserted'
+  type: typeof VECTOR_INSERTED
 }
 
 export type VectorDeleteOperation = AnyOperation & {
   operationId: OperationId
-  type: 'vector/delete'
+  type: typeof VECTOR_DELETE
 }
 export type VectorDeletedOperation = AnyOperation & {
   operationId: OperationId
-  type: 'vector/deleted'
+  type: typeof VECTOR_DELETED
 }
 
 export type LoguxProcessedOperation = AnyOperation & {
-  type: 'logux/processed'
+  type: typeof LOGUX_PROCESSED
 }
 
 export type VectorClientOperation<Item> =
@@ -86,7 +93,7 @@ export const createVector: VectorFactory = <Item>() => {
         insertBefore,
         id: Math.random().toString(),
         time: Date.now(),
-        type: 'vector/insert',
+        type: VECTOR_INSERT,
         payload: item,
       }
       state = next(state, operation)
@@ -99,7 +106,7 @@ export const createVector: VectorFactory = <Item>() => {
         id: Math.random().toString(),
         operationId: state.visibleOperations[index].id,
         time: Date.now(),
-        type: 'vector/delete',
+        type: VECTOR_DELETE,
       }
       state = next(state, operation)
     },

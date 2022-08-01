@@ -23,15 +23,13 @@ export const applyVectorOperation: ApplyVectorOperation = (
   order,
 ) => {
   let confirmCount = commitTypes.has(operation.type) ? 1 : 0
-  let patch = { [operation.id]: { order, undoCount: 0, confirmCount } }
   switch (operation.type) {
     case VECTOR_INSERT:
     case VECTOR_INSERTED:
       return {
         operationsTable: {
           ...operationsTable,
-          ...patch,
-          [operation.id]: { order, undoCount: 0, confirmCount: 0 },
+          [operation.id]: { order, undoCount: 0, confirmCount },
         },
         reOrderFrom: order,
       }
@@ -52,7 +50,7 @@ export const applyVectorOperation: ApplyVectorOperation = (
             ...targetOperation,
             undoCount: targetOperation.undoCount + 1,
           },
-          ...patch,
+          [operation.id]: { order: -1, undoCount: 0, confirmCount },
         },
         reOrderFrom,
       }

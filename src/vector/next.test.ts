@@ -186,11 +186,11 @@ describe('deletions', () => {
     let result = next(state, deleteOperation)
 
     expect(result).toEqual({
-      operationsInTime: [insertOperation, deleteOperation],
-      operationsInOrder: [insertOperation, deleteOperation],
+      operationsInTime: [insertOperation],
+      operationsInOrder: [insertOperation],
       operationsTable: {
         a: { order: 0, undoCount: 1, confirmCount: 0 },
-        b: { order: 1, undoCount: 0, confirmCount: 0 },
+        b: { order: -1, undoCount: 0, confirmCount: 0 },
       },
       visibleOperations: [],
       result: [],
@@ -228,11 +228,11 @@ describe('deletions', () => {
     let insertedState = next(deletedState, insertOperation2)
 
     expect(insertedState).toEqual({
-      operationsInTime: [insertOperation1, deleteOperation, insertOperation2],
-      operationsInOrder: [insertOperation2, insertOperation1, deleteOperation],
+      operationsInTime: [insertOperation1, insertOperation2],
+      operationsInOrder: [insertOperation2, insertOperation1],
       operationsTable: {
         a: { order: 1, undoCount: 1, confirmCount: 0 },
-        b: { order: 2, undoCount: 0, confirmCount: 0 },
+        b: { order: -1, undoCount: 0, confirmCount: 0 },
         c: { order: 0, undoCount: 0, confirmCount: 0 },
       },
       visibleOperations: [insertOperation2],

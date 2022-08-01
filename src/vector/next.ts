@@ -1,15 +1,16 @@
 import { applyVectorOperation } from './applyVectorOperation.js'
 import { findOrderIndex } from './findOrderIndex.js'
 import { findTimeIndex } from './findTimeIndex.js'
-import { insertOperation } from './insertOperation.js'
+import { arrayInsert } from './arrayInsert.js'
 import { updateTableOrder } from './updateTableOrder.js'
-import { VectorClientOperation, VectorState } from './createVector.js'
+import { VectorOperation, VectorState } from './createVector.js'
 import { aggregate } from './aggregate.js'
+import { VECTOR_INSERT, VECTOR_INSERTED } from './constants.js'
 
 interface Next {
   <Item>(
     state: VectorState<Item>,
-    operation: VectorClientOperation<Item>,
+    operation: VectorOperation<Item>,
   ): VectorState<Item>
 }
 
@@ -19,23 +20,23 @@ export const next: Next = (state, operation) => {
   let timeIndex: number = findTimeIndex(state.operationsInTime, operation)
   let orderIndex: number = findOrderIndex(state, operation)
 
-  let operationsInTime = insertOperation(
-    state.operationsInTime,
-    operation,
-    timeIndex,
-  )
-
-  let operationsInOrder = insertOperation(
-    state.operationsInOrder,
-    operation,
-    orderIndex,
-  )
-
   let unorderedOperation = applyVectorOperation(
     state.operationsTable,
     operation,
     orderIndex,
   )
+
+  let { operationsInTime, operationsInOrder } = state
+
+  if (operation.type === VECTOR_INSERT || operation.type === VECTOR_INSERTED) {
+    operationsInTime = arrayInsert(state.operationsInTime, operation, timeIndex)
+
+    operationsInOrder = arrayInsert(
+      state.operationsInOrder,
+      operation,
+      orderIndex,
+    )
+  }
 
   let operationsTable = updateTableOrder(unorderedOperation, operationsInOrder)
 

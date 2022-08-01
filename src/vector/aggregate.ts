@@ -1,11 +1,11 @@
-import { VectorOperation, VectorRecord } from './createVector.js'
+import { VectorInsertOperations, VectorRecord } from './createVector.js'
 
 interface Aggregate {
   <Item>(
-    operationsInOrder: VectorOperation<Item>[],
+    operationsInOrder: VectorInsertOperations<Item>[],
     operationsTable: VectorRecord<Item>,
   ): {
-    visibleOperations: VectorOperation<Item>[]
+    visibleOperations: VectorInsertOperations<Item>[]
     result: Item[]
   }
 }
@@ -23,7 +23,7 @@ export const aggregate: Aggregate = (operationsInOrder, operationsTable) =>
       return acc
     },
     {
-      visibleOperations: [] as VectorOperation<any>[],
+      visibleOperations: [] as VectorInsertOperations<any>[],
       result: [] as any[],
     },
   )

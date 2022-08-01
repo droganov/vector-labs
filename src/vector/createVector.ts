@@ -37,6 +37,10 @@ export type LoguxProcessedOperation = AnyOperation & {
   type: typeof LOGUX_PROCESSED
 }
 
+export type VectorInsertOperations<Item> =
+  | VectorInsertOperation<Item>
+  | VectorInsertedOperation<Item>
+
 export type VectorClientOperation<Item> =
   | VectorInsertOperation<Item>
   | VectorDeleteOperation
@@ -51,13 +55,13 @@ export type VectorOperation<Item> =
   | VectorRemoteOperation<Item>
 
 export type VectorState<Item> = {
-  operationsInTime: VectorOperation<Item>[] // sorted by time
-  operationsInOrder: VectorOperation<Item>[] // sorted by id-relation
+  operationsInTime: VectorInsertOperations<Item>[] // sorted by time
+  operationsInOrder: VectorInsertOperations<Item>[] // sorted by id-relation
   operationsTable: Record<
     OperationId,
     { order: number; undoCount: number; confirmCount: number }
   >
-  visibleOperations: VectorOperation<Item>[] // operationsInOrder filtered by undoCount === 0
+  visibleOperations: VectorInsertOperations<Item>[] // operationsInOrder filtered by undoCount === 0
   result: Item[] // mapped values of visibleOperations
 }
 

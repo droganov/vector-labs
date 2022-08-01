@@ -1,9 +1,9 @@
 import { aggregate } from './aggregate.js'
-import { VectorOperation } from './createVector.js'
+import { VectorInsertOperations } from './createVector.js'
 
 describe('vector/insert', () => {
   it('takes vector/insert', () => {
-    let visibleOperations: VectorOperation<string>[] = [
+    let visibleOperations: VectorInsertOperations<string>[] = [
       {
         id: 'a',
         time: 1,
@@ -21,7 +21,7 @@ describe('vector/insert', () => {
     })
   })
   it('ignores deleted vector/insert', () => {
-    let visibleOperations: VectorOperation<string>[] = [
+    let visibleOperations: VectorInsertOperations<string>[] = [
       {
         id: 'a',
         time: 1,
@@ -41,7 +41,7 @@ describe('vector/insert', () => {
 })
 describe('vector/inserted', () => {
   it('takes vector/inserted', () => {
-    let visibleOperations: VectorOperation<string>[] = [
+    let visibleOperations: VectorInsertOperations<string>[] = [
       {
         id: 'a',
         time: 1,
@@ -59,7 +59,7 @@ describe('vector/inserted', () => {
     })
   })
   it('ignores deleted vector/inserted', () => {
-    let visibleOperations: VectorOperation<string>[] = [
+    let visibleOperations: VectorInsertOperations<string>[] = [
       {
         id: 'a',
         time: 1,
@@ -79,13 +79,13 @@ describe('vector/inserted', () => {
 })
 describe('logux/processed', () => {
   it('ignores logux/processed', () => {
-    let visibleOperations: VectorOperation<string>[] = [
+    let visibleOperations = [
       {
         id: 'a',
         time: 1,
         type: 'logux/processed',
       },
-    ]
+    ] as unknown as VectorInsertOperations<string>[]
     let result = aggregate(visibleOperations, {
       a: { order: 0, undoCount: 0, confirmCount: 0 },
     })

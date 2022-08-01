@@ -6,3 +6,4 @@ export const VECTOR_DELETE = 'vector/delete'
 export const VECTOR_DELETED = 'vector/deleted'
 
 export const commitTypes = new Set([VECTOR_INSERTED, VECTOR_DELETED])
+export const insertTypes = new Set([VECTOR_INSERT, VECTOR_INSERTED])

@@ -129,7 +129,7 @@ describe('vector/delete', () => {
       1,
     )
     expect(result.operationsTable.b).toEqual({
-      order: 1,
+      order: -1,
       undoCount: 0,
       confirmCount: 0,
     })

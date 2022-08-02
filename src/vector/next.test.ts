@@ -266,7 +266,7 @@ describe('deletions', () => {
       operationsInOrder: [insertOperation],
       operationsTable: {
         a: { order: 0, undoCount: 1, confirmCount: 0 },
-        b: { order: -1, undoCount: 0, confirmCount: 0 },
+        b: { undoCount: 0, confirmCount: 0, operation: deleteOperation },
       },
       visibleOperations: [],
       result: [],
@@ -308,7 +308,7 @@ describe('deletions', () => {
       operationsInOrder: [insertOperation2, insertOperation1],
       operationsTable: {
         a: { order: 1, undoCount: 1, confirmCount: 0 },
-        b: { order: -1, undoCount: 0, confirmCount: 0 },
+        b: { undoCount: 0, confirmCount: 0, operation: deleteOperation },
         c: { order: 0, undoCount: 0, confirmCount: 0 },
       },
       visibleOperations: [insertOperation2],

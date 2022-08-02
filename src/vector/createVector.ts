@@ -69,13 +69,28 @@ export type VectorOperation<Item> =
   | VectorClientOperation<Item>
   | VectorRemoteOperation<Item>
 
+export type VectorInsertsOperationState = {
+  operation?: undefined
+  order: number
+  undoCount: number
+  confirmCount: number
+}
+
+export type VectorDeleteOperationState = {
+  confirmCount: number
+  operation: VectorDeleteOperation | VectorDeletedOperation
+  order?: undefined
+  undoCount: number
+}
+
+export type VectorAnyOperationState =
+  | VectorInsertsOperationState
+  | VectorDeleteOperationState
+
 export type VectorState<Item> = {
   operationsInTime: VectorInsertOperations<Item>[] // sorted by time
   operationsInOrder: VectorInsertOperations<Item>[] // sorted by id-relation
-  operationsTable: Record<
-    OperationId,
-    { order: number; undoCount: number; confirmCount: number }
-  >
+  operationsTable: Record<OperationId, VectorAnyOperationState>
   visibleOperations: VectorInsertOperations<Item>[] // operationsInOrder filtered by undoCount === 0
   result: Item[] // mapped values of visibleOperations
 }

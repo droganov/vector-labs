@@ -1,5 +1,9 @@
 import { addOperationToHashTable } from './addOperationToHashTable.js'
-import { VectorClientOperation } from './createVector.js'
+import {
+  VectorClientOperation,
+  VectorDeleteOperation,
+  VectorDeleteOperationState,
+} from './createVector.js'
 
 it('throws when operation type is not supported', () => {
   expect(() => {
@@ -187,7 +191,6 @@ describe('vector/delete', () => {
       ],
       order: 1,
     })
-    expect(result.c.order).toBe(-1)
     expect(result.b.order).toBe(0)
     expect(result.a.order).toBe(1)
   })
@@ -218,9 +221,14 @@ describe('vector/delete', () => {
       order: 1,
     })
     expect(result.b).toEqual({
-      order: -1,
       undoCount: 0,
       confirmCount: 0,
+      operation: {
+        id: 'b',
+        operationId: 'a',
+        time: 1,
+        type: 'vector/delete',
+      },
     })
   })
   it('throws when deleting unexisting operations', () => {
@@ -238,5 +246,71 @@ describe('vector/delete', () => {
       })
     }
     expect(getResult).toThrow('Vector: operation "a" not found')
+  })
+})
+
+describe('logux/undo', () => {
+  it('throws when the state is not consistent', () => {
+    let getResult = (): void => {
+      addOperationToHashTable({
+        operationsTable: {},
+        operation: {
+          id: 'b',
+          type: 'logux/undo',
+        },
+        operationsInOrder: [],
+        order: 0,
+      })
+    }
+    expect(getResult).toThrow('Vector: operation "b" not found')
+  })
+  it('throws reverts insert operation', () => {
+    let result = addOperationToHashTable({
+      operationsTable: {
+        a: {
+          order: 0,
+          undoCount: 0,
+          confirmCount: 0,
+        },
+      },
+      operation: {
+        id: 'a',
+        type: 'logux/undo',
+      },
+      operationsInOrder: [],
+      order: 0,
+    })
+    expect(result.a.undoCount).toBe(1)
+  })
+  it('reverts delete operation', () => {
+    let deleteOperation: VectorDeleteOperation = {
+      id: 'b',
+      operationId: 'a',
+      time: 1,
+      type: 'vector/delete',
+    }
+    let bb: VectorDeleteOperationState = {
+      undoCount: 0,
+      confirmCount: 0,
+      operation: deleteOperation,
+    }
+    let result = addOperationToHashTable({
+      operationsTable: {
+        a: {
+          order: 0,
+          undoCount: 1,
+          confirmCount: 0,
+        },
+        bb,
+      },
+      operation: {
+        id: 'bb',
+        type: 'logux/undo',
+      },
+      operationsInOrder: [],
+      order: 0,
+    })
+    expect(result.a.undoCount).toBe(0)
+    expect(result.bb.undoCount).toBe(1)
   })
 })

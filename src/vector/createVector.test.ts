@@ -100,21 +100,134 @@ describe('conflicts', () => {
     })
     expect(vector.getValue()).toEqual(['b', 'c'])
 
-    // vector.syncronize({
-    //   id: 'd',
-    //   insertBefore: 'a',
-    //   time: 1.5,
-    //   type: 'vector/inserted',
-    //   payload: 'd',
-    // })
-    // expect(vector.getValue()).toEqual(['d', 'b', 'c'])
-
     vector.syncronize({
       id: 'd',
+      insertBefore: 'a',
+      time: 1.5,
+      type: 'vector/inserted',
+      payload: 'd',
+    })
+    expect(vector.getValue()).toEqual(['d', 'b', 'c'])
+
+    vector.syncronize({
+      id: 'e',
       operationId: 'b',
       time: 4,
       type: 'vector/deleted',
     })
-    expect(vector.getValue()).toEqual(['c'])
+    expect(vector.getValue()).toEqual(['d', 'c'])
+  })
+
+  it('solves a > b', () => {
+    let a = createVector<string>()
+    let b = createVector<string>()
+
+    a.syncronize({
+      id: 'a',
+      insertBefore: null,
+      time: 1,
+      type: 'vector/insert',
+      payload: 'a',
+    })
+    b.syncronize({
+      id: 'b',
+      insertBefore: null,
+      time: 2,
+      type: 'vector/insert',
+      payload: 'b',
+    })
+
+    a.syncronize({
+      id: 'a',
+      type: 'logux/processed',
+    })
+    b.syncronize({
+      id: 'b',
+      type: 'logux/processed',
+    })
+
+    a.syncronize({
+      id: 'b',
+      insertBefore: null,
+      time: 2,
+      type: 'vector/inserted',
+      payload: 'b',
+    })
+    b.syncronize({
+      id: 'a',
+      insertBefore: null,
+      time: 1,
+      type: 'vector/inserted',
+      payload: 'a',
+    })
+
+    expect(a.getValue()).toEqual(['a', 'b'])
+    expect(b.getValue()).toEqual(['a', 'b'])
+  })
+
+  it('solves b > c > a', () => {
+    let a = createVector<string>()
+    let b = createVector<string>()
+
+    a.syncronize({
+      id: 'a',
+      insertBefore: null,
+      time: 1,
+      type: 'vector/insert',
+      payload: 'a',
+    })
+    a.syncronize({
+      id: 'a',
+      type: 'logux/processed',
+    })
+    b.syncronize({
+      id: 'a',
+      insertBefore: null,
+      time: 1,
+      type: 'vector/inserted',
+      payload: 'a',
+    })
+
+    b.syncronize({
+      id: 'b',
+      insertBefore: 'a',
+      time: 2,
+      type: 'vector/insert',
+      payload: 'b',
+    })
+    a.syncronize({
+      id: 'c',
+      insertBefore: 'a',
+      time: 3,
+      type: 'vector/insert',
+      payload: 'c',
+    })
+
+    a.syncronize({
+      id: 'c',
+      type: 'logux/processed',
+    })
+    b.syncronize({
+      id: 'b',
+      type: 'logux/processed',
+    })
+
+    b.syncronize({
+      id: 'c',
+      insertBefore: 'a',
+      time: 3,
+      type: 'vector/inserted',
+      payload: 'c',
+    })
+    a.syncronize({
+      id: 'b',
+      insertBefore: 'a',
+      time: 2,
+      type: 'vector/inserted',
+      payload: 'b',
+    })
+
+    expect(a.getValue()).toEqual(['b', 'c', 'a'])
+    expect(b.getValue()).toEqual(['b', 'c', 'a'])
   })
 })

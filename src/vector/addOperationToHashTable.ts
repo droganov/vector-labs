@@ -90,9 +90,6 @@ export const addOperationToHashTable: ApplyVectorOperation = ({
       }
       let redo
       let deleteOperation = targetOperationHash.operation
-      if (operation.id === 'bb') {
-        console.log('operation.id: ', targetOperationHash)
-      }
       if (deleteOperation) {
         let insertOperationHash = operationsTable[
           deleteOperation.operationId

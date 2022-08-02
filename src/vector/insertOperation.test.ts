@@ -1,4 +1,4 @@
-import { applyInsertOperation } from './applyInsertOperation.js'
+import { insertOperation } from './insertOperation.js'
 import {
   LoguxProcessedOperation,
   VectorDeletedOperation,
@@ -15,7 +15,7 @@ it('takes vector/insert operation', () => {
     payload: '1',
     insertBefore: null,
   }
-  let result = applyInsertOperation(
+  let result = insertOperation(
     { operationsInOrder: [], operationsInTime: [] },
     {
       operation,
@@ -36,7 +36,7 @@ it('takes vector/inserted operation', () => {
     payload: '1',
     insertBefore: null,
   }
-  let result = applyInsertOperation(
+  let result = insertOperation(
     { operationsInOrder: [], operationsInTime: [] },
     {
       operation,
@@ -56,7 +56,7 @@ it('skips vector/delete operation', () => {
     time: 2,
     type: 'vector/delete',
   }
-  let result = applyInsertOperation(
+  let result = insertOperation(
     { operationsInOrder: [], operationsInTime: [] },
     {
       operation,
@@ -76,7 +76,7 @@ it('skips vector/deleted operation', () => {
     time: 2,
     type: 'vector/deleted',
   }
-  let result = applyInsertOperation(
+  let result = insertOperation(
     { operationsInOrder: [], operationsInTime: [] },
     {
       operation,
@@ -92,10 +92,9 @@ it('skips vector/deleted operation', () => {
 it('skips logux/processed event', () => {
   let operation: LoguxProcessedOperation = {
     id: '2',
-    time: 2,
     type: 'logux/processed',
   }
-  let result = applyInsertOperation(
+  let result = insertOperation(
     { operationsInOrder: [], operationsInTime: [] },
     {
       operation,

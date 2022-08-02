@@ -1,25 +1,26 @@
-import { ApplyVectorOperationResult } from './applyVectorOperation.js'
-import { VectorOperation, VectorRecord } from './createVector.js'
+import { VectorInsertOperations, VectorRecord } from './createVector.js'
 
 interface UpdateTableOrder {
-  <Item>(
-    unorderedOperation: ApplyVectorOperationResult,
-    operations: VectorOperation<Item>[],
-  ): VectorRecord<Item>
+  <Item>(props: {
+    operationsInOrder: VectorInsertOperations<Item>[]
+    operationsTable: VectorRecord<Item>
+    reorderFrom: number
+  }): VectorRecord<Item>
 }
 
-export const updateTableOrder: UpdateTableOrder = (
-  { operationsTable, reOrderFrom },
-  operations,
-) =>
-  operations.slice(reOrderFrom).reduce(
+export const updateTableOrder: UpdateTableOrder = ({
+  operationsInOrder,
+  operationsTable,
+  reorderFrom,
+}) =>
+  operationsInOrder.slice(reorderFrom).reduce(
     (acc, operation, index) => {
       if (!(operation.id in acc)) {
         throw new Error(`Key "${operation.id}" is not in operations table`)
       }
       acc[operation.id] = {
         ...acc[operation.id],
-        order: reOrderFrom + index,
+        order: reorderFrom + index,
       }
       return acc
     },

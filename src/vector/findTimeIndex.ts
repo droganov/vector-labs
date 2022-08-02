@@ -1,12 +1,19 @@
-import { AnyOperation } from './createVector.js'
+import { VECTOR_INSERT, VECTOR_INSERTED } from './constants.js'
+import { VectorInsertOperations, VectorOperation } from './createVector.js'
 
 interface FindTimeIndex {
-  (operations: AnyOperation[], operation: AnyOperation): number
+  <Item>(
+    operationsInTime: VectorInsertOperations<Item>[],
+    operation: VectorOperation<Item>,
+  ): number
 }
 
-export const findTimeIndex: FindTimeIndex = (operations, operation) => {
-  for (let i = operations.length; i--; i >= 0) {
-    if (operation.time >= operations[i].time) {
+export const findTimeIndex: FindTimeIndex = (operationsInTime, operation) => {
+  if (operation.type !== VECTOR_INSERT && operation.type !== VECTOR_INSERTED) {
+    return 0
+  }
+  for (let i = operationsInTime.length; i--; i >= 0) {
+    if (operation.time >= operationsInTime[i].time) {
       return i + 1
     }
   }

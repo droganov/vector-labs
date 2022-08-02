@@ -2,7 +2,7 @@ import { arrayInsert } from './arrayInsert.js'
 import { VECTOR_INSERT, VECTOR_INSERTED } from './constants.js'
 import { VectorOperation, VectorState } from './createVector.js'
 
-interface ApplyInsertOperation {
+interface InsertOperation {
   <Item>(
     state: Pick<VectorState<Item>, 'operationsInOrder' | 'operationsInTime'>,
     data: {
@@ -13,7 +13,7 @@ interface ApplyInsertOperation {
   ): Pick<VectorState<Item>, 'operationsInOrder' | 'operationsInTime'>
 }
 
-export const applyInsertOperation: ApplyInsertOperation = (
+export const insertOperation: InsertOperation = (
   { operationsInOrder, operationsInTime },
   { operation, timeIndex, orderIndex },
 ) => {

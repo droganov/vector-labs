@@ -1,10 +1,10 @@
-import { applyVectorOperation } from './applyVectorOperation.js'
+import { addOperationToHashTable } from './addOperationToHashTable.js'
 import { findOrderIndex } from './findOrderIndex.js'
 import { findTimeIndex } from './findTimeIndex.js'
-import { updateTableOrder } from './updateTableOrder.js'
 import { VectorOperation, VectorState } from './createVector.js'
 import { aggregate } from './aggregate.js'
-import { applyInsertOperation } from './applyInsertOperation.js'
+import { insertOperation } from './insertOperation.js'
+import { loguxEvents } from './constants.js'
 
 interface Next {
   <Item>(
@@ -14,24 +14,28 @@ interface Next {
 }
 
 export const next: Next = (state, operation) => {
-  if (operation.id in state.operationsTable) return state
+  if (
+    operation.id in state.operationsTable &&
+    !loguxEvents.has(operation.type)
+  ) {
+    return state
+  }
 
   let timeIndex: number = findTimeIndex(state.operationsInTime, operation)
-  let orderIndex: number = findOrderIndex(state, operation)
+  let orderIndex: number = findOrderIndex(state.operationsInOrder, operation)
 
-  let unorderedOperation = applyVectorOperation(
-    state.operationsTable,
-    operation,
-    orderIndex,
-  )
-
-  let { operationsInTime, operationsInOrder } = applyInsertOperation(state, {
+  let { operationsInTime, operationsInOrder } = insertOperation(state, {
     operation,
     timeIndex,
     orderIndex,
   })
 
-  let operationsTable = updateTableOrder(unorderedOperation, operationsInOrder)
+  let operationsTable = addOperationToHashTable({
+    operationsTable: state.operationsTable,
+    operation,
+    order: orderIndex,
+    operationsInOrder,
+  })
 
   let { visibleOperations, result } = aggregate(
     operationsInOrder,

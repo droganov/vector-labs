@@ -1,15 +1,10 @@
 import { findOrderIndex } from './findOrderIndex.js'
-import { VectorClientOperation, VectorState } from './createVector.js'
+import {
+  VectorClientOperation,
+  VectorInsertOperations,
+} from './createVector.js'
 
-it('returns 0 when has empty logs', () => {
-  let state: VectorState<string> = {
-    operationsInTime: [],
-    operationsTable: {},
-    operationsInOrder: [],
-    visibleOperations: [],
-    result: [],
-  }
-
+it('appends first', () => {
   let operation: VectorClientOperation<string> = {
     id: 'a',
     time: 1,
@@ -18,61 +13,139 @@ it('returns 0 when has empty logs', () => {
     payload: 'a',
   }
 
-  let index = findOrderIndex(state, operation)
+  let index = findOrderIndex([], operation)
 
   expect(index).toBe(0)
 })
 
-it('returns operationsInOrder length when has no pointer operationsTable', () => {
-  let state: VectorState<string> = {
-    operationsInTime: [],
-    operationsTable: {},
-    operationsInOrder: [
-      {
-        id: 'b',
-        time: 2,
-        type: 'vector/insert',
-        insertBefore: null,
-        payload: 'b',
-      },
-    ],
-    visibleOperations: [],
-    result: [],
+it('appends n-th', () => {
+  let operationsInOrder: VectorInsertOperations<any>[] = [
+    {
+      id: 'a',
+      time: 1,
+      type: 'vector/insert',
+      insertBefore: null,
+      payload: 'a',
+    },
+  ]
+  let operation: VectorInsertOperations<string> = {
+    id: 'b',
+    time: 2,
+    type: 'vector/insert',
+    insertBefore: null,
+    payload: 'b',
   }
 
-  let operation: VectorClientOperation<string> = {
+  let index = findOrderIndex(operationsInOrder, operation)
+
+  expect(index).toBe(1)
+})
+it('appends reversed', () => {
+  let operationsInOrder: VectorInsertOperations<any>[] = [
+    {
+      id: 'b',
+      time: 2,
+      type: 'vector/insert',
+      insertBefore: null,
+      payload: 'b',
+    },
+  ]
+
+  let operation: VectorInsertOperations<string> = {
     id: 'a',
     time: 1,
-    type: 'vector/insert',
+    type: 'vector/inserted',
     insertBefore: null,
     payload: 'a',
   }
 
-  let index = findOrderIndex(state, operation)
+  let index = findOrderIndex(operationsInOrder, operation)
+
+  expect(index).toBe(0)
+})
+
+it('prepends one', () => {
+  let operationsInOrder: VectorInsertOperations<any>[] = [
+    {
+      id: 'a',
+      time: 1,
+      type: 'vector/insert',
+      insertBefore: null,
+      payload: 'a',
+    },
+  ]
+
+  let operation: VectorClientOperation<string> = {
+    id: 'b',
+    time: 2,
+    type: 'vector/insert',
+    insertBefore: 'a',
+    payload: 'b',
+  }
+
+  let index = findOrderIndex(operationsInOrder, operation)
+
+  expect(index).toBe(0)
+})
+
+it('prepends another', () => {
+  let operationsInOrder: VectorInsertOperations<any>[] = [
+    {
+      id: 'b',
+      time: 2,
+      type: 'vector/insert',
+      insertBefore: 'a',
+      payload: 'b',
+    },
+    {
+      id: 'a',
+      time: 1,
+      type: 'vector/insert',
+      insertBefore: null,
+      payload: 'a',
+    },
+  ]
+
+  let operation: VectorClientOperation<string> = {
+    id: 'c',
+    time: 3,
+    type: 'vector/insert',
+    insertBefore: 'a',
+    payload: 'c',
+  }
+
+  let index = findOrderIndex(operationsInOrder, operation)
 
   expect(index).toBe(1)
 })
 
-it('takes index from operationsTable', () => {
-  let state: VectorState<string> = {
-    operationsInTime: [],
-    operationsTable: {
-      b: { order: 3, undoCount: 0, confirmCount: 0 },
+it('prepends reversed', () => {
+  let operationsInOrder: VectorInsertOperations<any>[] = [
+    {
+      id: 'b',
+      time: 3,
+      type: 'vector/insert',
+      insertBefore: 'a',
+      payload: 'b',
     },
-    operationsInOrder: [],
-    visibleOperations: [],
-    result: [],
+    {
+      id: 'a',
+      time: 1,
+      type: 'vector/insert',
+      insertBefore: null,
+      payload: 'a',
+    },
+  ]
+
+  let operation: VectorInsertOperations<string> = {
+    id: 'c',
+    time: 2,
+    type: 'vector/inserted',
+    insertBefore: 'a',
+    payload: 'c',
   }
 
-  let operation: VectorClientOperation<string> = {
-    id: 'a',
-    time: 1,
-    type: 'vector/insert',
-    insertBefore: 'b',
-    payload: 'a',
-  }
+  let index = findOrderIndex(operationsInOrder, operation)
 
-  let index = findOrderIndex(state, operation)
-
-  expect(index).toBe(3)
+  expect(index).toBe(0)
 })

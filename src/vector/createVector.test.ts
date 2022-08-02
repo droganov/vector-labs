@@ -1,4 +1,8 @@
-import { createVector } from './createVector.js'
+import {
+  createVector,
+  VectorInsertedOperation,
+  VectorRemoteOperation,
+} from './createVector.js'
 
 describe('insertions', () => {
   it('inserts first', () => {
@@ -50,5 +54,67 @@ describe('deletions', () => {
 
     vector.delete(0)
     expect(vector.getValue()).toEqual([])
+  })
+})
+
+describe('conflicts', () => {
+  it('resolves concurrency', () => {
+    let vector = createVector<string>()
+
+    vector.syncronize({
+      id: 'a',
+      insertBefore: null,
+      time: 1,
+      type: 'vector/insert',
+      payload: 'a',
+    })
+    expect(vector.getValue()).toEqual(['a'])
+
+    vector.syncronize({
+      id: 'b',
+      insertBefore: 'a',
+      time: 2,
+      type: 'vector/insert',
+      payload: 'b',
+    })
+    expect(vector.getValue()).toEqual(['b', 'a'])
+
+    vector.syncronize({
+      id: 'a',
+      type: 'logux/undo',
+    })
+    expect(vector.getValue()).toEqual(['b'])
+
+    vector.syncronize({
+      id: 'b',
+      type: 'logux/processed',
+    })
+    expect(vector.getValue()).toEqual(['b'])
+
+    vector.syncronize({
+      id: 'c',
+      insertBefore: 'a',
+      time: 3,
+      type: 'vector/inserted',
+      payload: 'c',
+    })
+    expect(vector.getValue()).toEqual(['b', 'c'])
+
+    // vector.syncronize({
+    //   id: 'd',
+    //   insertBefore: 'a',
+    //   time: 1.5,
+    //   type: 'vector/inserted',
+    //   payload: 'd',
+    // })
+    // expect(vector.getValue()).toEqual(['d', 'b', 'c'])
+
+    vector.syncronize({
+      id: 'd',
+      operationId: 'b',
+      time: 4,
+      type: 'vector/deleted',
+    })
+    expect(vector.getValue()).toEqual(['c'])
   })
 })

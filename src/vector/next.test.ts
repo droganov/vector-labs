@@ -3,6 +3,7 @@ import {
   VectorClientOperation,
   VectorDeleteOperation,
   VectorInsertOperation,
+  VectorOperation,
   VectorState,
 } from './createVector.js'
 
@@ -158,6 +159,81 @@ describe('insertions', () => {
       visibleOperations: [secondOperation, firstOperation],
       result: ['item 2', 'item 1'],
     })
+  })
+  it('sorts inserts', () => {
+    let firstOperation: VectorOperation<string> = {
+      insertBefore: null,
+      id: 'a',
+      time: 1,
+      type: 'vector/insert',
+      payload: 'item a',
+    }
+    let secondOperation: VectorOperation<string> = {
+      insertBefore: 'a',
+      id: 'b',
+      time: 2,
+      type: 'vector/insert',
+      payload: 'item b',
+    }
+    let thirdOperation: VectorOperation<string> = {
+      id: 'c',
+      insertBefore: 'a',
+      time: 3,
+      type: 'vector/insert',
+      payload: 'item c',
+    }
+    let fourthOperation: VectorOperation<string> = {
+      id: 'd',
+      insertBefore: 'a',
+      time: 1.5,
+      type: 'vector/inserted',
+      payload: 'item d',
+    }
+    let state: VectorState<string> = {
+      operationsInTime: [],
+      operationsInOrder: [],
+      operationsTable: {},
+      visibleOperations: [],
+      result: [],
+    }
+
+    let state1 = next(state, firstOperation)
+    let state2 = next(state1, secondOperation)
+    let state3 = next(state2, {
+      id: 'a',
+      type: 'logux/undo',
+    })
+    let state4 = next(state3, {
+      id: 'b',
+      type: 'logux/processed',
+    })
+    let state5 = next(state4, thirdOperation)
+    let state6 = next(state5, fourthOperation)
+
+    expect(state6.operationsInTime).toEqual([
+      firstOperation,
+      fourthOperation,
+      secondOperation,
+      thirdOperation,
+    ])
+    expect(state6.operationsInOrder).toEqual([
+      fourthOperation,
+      secondOperation,
+      thirdOperation,
+      firstOperation,
+    ])
+    expect(state6.operationsTable).toEqual({
+      a: { order: 3, undoCount: 1, confirmCount: 1 }, // 1
+      d: { order: 0, undoCount: 0, confirmCount: 1 }, // 1.5
+      c: { order: 2, undoCount: 0, confirmCount: 0 }, // 3
+      b: { order: 1, undoCount: 0, confirmCount: 1 }, // 2
+    })
+    expect(state6.visibleOperations).toEqual([
+      fourthOperation,
+      secondOperation,
+      thirdOperation,
+    ])
+    expect(state6.result).toEqual(['item d', 'item b', 'item c'])
   })
 })
 
